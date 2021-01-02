@@ -7,3 +7,4 @@ The worm has a fece where random colors appear and a back where only one color s
 The color on the back is a random pick from the 3 face colors: front, left, right. You can rotate those colors according the chances you configure previous the game.
 
 Setup:
+![alt text](https://github.com/jkarpago/CrazyWorm/blob/main/img/start.jpg?raw=true)
