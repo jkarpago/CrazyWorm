@@ -1,5 +1,4 @@
 #define PULSE_LENGTH 2000
-#define USE_LOG_LEVEL  LOG_ALL
 #include "Serial.h"
 ServicePortSerial Serial;
 
@@ -31,7 +30,7 @@ int changesavailable = 0;
 bool changesselecting = false;
 
 void setup() {    
-    Serial.begin();
+    //Serial.begin();
     restartgame();
 }
 
@@ -212,8 +211,6 @@ void loop() {
               mode = ALONE;
           }else if(mode == FINAL_BLINK){
               for (int i = 0; i < 6; i++){
-                //Serial.println("face alone");
-                //Serial.print(facesvalues[i]);
                   if(facesvalues[i] > 0){
                       int expandcolor = facesvalues[i];
                       setColorOnFace(getvalueColor(expandcolor), i);                
@@ -256,7 +253,6 @@ void loop() {
                           if(mode == NOT_SET || mode == WAITING){
                               mode = NOT_SET;
                               facesvalues[f] = val + 10;
-                              //Serial.println("ha cambiado el valor");
                               dopaint = true;
                           }else  if(mode == INITIAL_BLINK){
                               if(getLastValueReceivedOnFace(f) > 20){
@@ -314,11 +310,9 @@ void loop() {
           if(isclicked && mode == INITIAL_BLINK && neighbourscnt == 1){  
               
               int *randcolors = randomizeColors(keyBufferColor);
-              //Serial.println("entra en inicial");
               
               for (int i = 0; i < 6; i++){  
                   int facecol = randcolors[i];
-                  //Serial.println(facecol);
                   setColorOnFace(getvalueColor(facecol), i);
                   initialvalues[i] = facecol;
                   
@@ -354,7 +348,6 @@ void loop() {
               
           }else if(mode == NOT_SET && neighbourscnt > 1 && dopaint == true){
       
-            //Serial.println("entra en waiting");
               mode = WAITING;
               int expandcolor = 0;
               int expandface = 0;
@@ -364,15 +357,9 @@ void loop() {
                       expandcolor = facesvalues[i] - 10;
                       expandface = i;
                       setColorOnFace(getvalueColor(expandcolor), i);
-                      ////Serial.println("antes de options");
-                      //options = getDatagramOnFace(i);
-                      if ( isDatagramReadyOnFace( i ) ) { //received ball
+                      if ( isDatagramReadyOnFace( i ) ) {
       
-                        //Serial.println("datagram recibido");
                         const byte *datagramPayload = getDatagramOnFace(i);
-                        //Serial.println(datagramPayload[0]);
-                        //Serial.println(datagramPayload[1]);
-                        //Serial.println(datagramPayload[2]);
                         options[0] = datagramPayload[0];
                         options[1] = datagramPayload[1];
                         options[2] = datagramPayload[2];
@@ -382,16 +369,12 @@ void loop() {
                           options[3] = changesavailable;
                         }
                         changesavailable = options[3];
-                        
-                        //Serial.println(changesavailable);
-                        //Serial.println(options[3]);
                 
                       }
                       break;
                   }
               }
       
-              ////Serial.println("primer loop");
       
               for (int i = 0; i < 6; i++){
                   if(facesvalues[i] > 0 && facesvalues[i] < 10){
@@ -404,9 +387,7 @@ void loop() {
               markDatagramReadOnFace(expandface);
               dopaint = false;
           }else if(mode == NOT_SET && neighbourscnt == 1 && dopaint == true){
-      
-              ////Serial.println("entra en final");
-              
+                    
               setColor(OFF);
               mode = FINAL_BLINK;
               int opositeblink = 0;
@@ -423,27 +404,16 @@ void loop() {
                       //options = getDatagramOnFace(i);
                       if ( isDatagramReadyOnFace( i ) ) { //received ball
       
-                        //Serial.println("datagram recibido final");
                         const byte *datagramPayload = getDatagramOnFace(i);
-                        //Serial.println(datagramPayload[0]);
-                        //Serial.println(datagramPayload[1]);
-                        //Serial.println(datagramPayload[2]);
                         options[0] = datagramPayload[0];
                         options[1] = datagramPayload[1];
                         options[2] = datagramPayload[2];
                         changesavailable = datagramPayload[3];
-                        //Serial.println(datagramPayload[3]);
-                        //Serial.println(changesavailable);
                 
                       }
-                      ////Serial.println("despues de options final");
-                  }else{
-                     //setValueSentOnFace(0, i);   
                   }
               }
-      
-              ////Serial.println("primer loop final");
-      
+            
               int rndcolor = random(2);
               int actualcolor = options[rndcolor];
                      
@@ -451,7 +421,6 @@ void loop() {
               setValueSentOnFace(20 + actualcolor, opositeblink);  
               setColorOnFace(getvalueColor(actualcolor), opositeblink);
               dim(getvalueColor(actualcolor), 40);
-              //setColorOnFace(RED, opositeblink);
               markDatagramReadOnFace(expandface);
               dopaint = false;
       
@@ -464,6 +433,7 @@ void loop() {
 }
 
 void restartgame(){
+  randomize();
   changesavailable = 0;
   clockstarted = false;
   clockstep = -3;
@@ -483,8 +453,7 @@ void resetgame(bool manualreset){
     mode = NOT_SET;
     if(manualreset == true){
       setColor(OFF);
-    }
-    //Serial.println("doble click"); 
+    } 
 }
 
 void resetfaces(){
